@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventurer Leveling Cost Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .formula {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .adventurer-icon {
+            transition: all 0.3s ease;
+        }
+        .adventurer-icon:hover {
+            transform: scale(1.05);
+        }
+        .selected {
+            border: 2px solid #4f46e5;
+            background-color: #eff6ff;
+            transform: scale(1.05);
+        }
+        .calculation-step:nth-child(odd) {
+            background-color: #f9fafb;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .adventure-select {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4">
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center py-6">
+            <h1 class="text-3xl font-bold text-indigo-700 mb-2">Adventurer Leveling Cost Calculator</h1>
+            <p class="text-gray-600">Calculate the cost to level up your adventurers based on the given formulas</p>
+        </header>
+
+        <main>
+            <div class="card p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-600 border-b pb-2">Select Your Adventurer</h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                    <label class="cursor-pointer text-center">
+                        <input type="radio" name="adventurer" value="piggy" class="adventure-select" checked>
+                        <div class="adventurer-icon rounded-lg p-3 selected" data-adventurer="piggy">
+                            <i class="fas fa-piggy-bank text-3xl text-pink-500 mb-2"></i>
+                            <div class="text-sm font-medium">Piggy</div>
+                            <div class="text-xs text-gray-500">a = 2</div>
+                        </div>
+                    </label>
+                    
+                    <label class="cursor-pointer text-center">
+                        <input type="radio" name="adventurer" value="panda" class="adventure-select">
+                        <div class="adventurer-icon rounded-lg p-3" data-adventurer="panda">
+                            <i class="fas fa-paw text-3xl text-black mb-2"></i>
+                            <div class="text-sm font-medium">Panda</div>
+                            <div class="text-xs text-gray-500">a = 3</div>
+                        </div>
+                    </label>
+                    
+                    <label class="cursor-pointer text-center">
+                        <input type="radio" name="adventurer" value="bear" class="adventure-select">
+                        <div class="adventurer-icon rounded-lg p-3" data-adventurer="bear">
+                            <i class="fas fa-dog text-3xl text-yellow-700 mb-2"></i>
+                            <div class="text-sm font-medium">Bear</div>
+                            <div class="text-xs text-gray-500">a = 4</div>
+                        </div>
+                    </label>
+                    
+                    <label class="cursor-pointer text-center">
+                        <input type="radio" name="adventurer" value="dragongirl" class="adventure-select">
+                        <div class="adventurer-icon rounded-lg p-3" data-adventurer="dragongirl">
+                            <i class="fas fa-dragon text-3xl text-purple-600 mb-2"></i>
+                            <div class="text-sm font-medium">Dragon Girl</div>
+                            <div class="text-xs text-gray-500">a = 5</div>
+                        </div>
+                    </label>
+                    
+                    <label class="cursor-pointer text-center">
+                        <input type="radio" name="adventurer" value="wukong" class="adventure-select">
+                        <div class="adventurer-icon rounded-lg p-3" data-adventurer="wukong">
+                            <i class="fas fa-khanda text-3xl text-red-600 mb-2"></i>
+                            <div class="text-sm font-medium">Wukong</div>
+                            <div class="text-xs text-gray-500">a = 5</div>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="startLevel" class="block text-sm font-medium text-gray-700 mb-1">Starting Level (1-100)</label>
+                        <input type="number" id="startLevel" min="1" max="100" value="1" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    
+                    <div>
+                        <label for="targetLevel" class="block text-sm font-medium text-gray-700 mb-1">Target Level (1-100)</label>
+                        <input type="number" id="targetLevel" min="1" max="100" value="100" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                    </div>
+                </div>
+                
+                <button id="calculateBtn" class="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 transition-colors font-medium">
+                    Calculate Leveling Cost
+                </button>
+            </div>
+            
+            <div id="errorContainer" class="hidden bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-8 rounded" role="alert">
+                <p class="font-bold">Error</p>
+                <p id="errorMessage"></p>
+            </div>
+            
+            <div id="resultsContainer" class="hidden card mb-8">
+                <div class="bg-indigo-500 text-white py-3 px-6">
+                    <h2 class="text-xl font-semibold">Calculation Results</h2>
+                </div>
+                
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-indigo-50 rounded-lg p-4">
+                            <div class="text-sm text-gray-500">Adventurer</div>
+                            <div id="resultAdventurer" class="text-xl font-medium">Piggy (a = 2)</div>
+                        </div>
+                        
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <div class="text-sm text-gray-500">Total Cost</div>
+                            <div id="resultCost" class="text-xl font-medium text-green-600">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium mb-2 text-indigo-600">Level Range</h3>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex justify-between">
+                                <div>
+                                    <span class="text-gray-500">From:</span>
+                                    <span id="resultStartLevel" class="font-medium ml-1">1</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">To:</span>
+                                    <span id="resultTargetLevel" class="font-medium ml-1">100</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-medium mb-2 text-indigo-600">Calculation Breakdown</h3>
+                        <div id="calculationSteps" class="border rounded-lg divide-y"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-8">
+                <div class="bg-gray-100 py-3 px-6 border-b">
+                    <h2 class="text-xl font-semibold">Formula Explanation</h2>
+                </div>
+                
+                <div class="p-6">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium mb-2 text-indigo-600">Cost Function</h3>
+                        <p class="mb-2">The cost to level up from level x to level x+1 is given by:</p>
+                        <div class="formula text-center text-xl my-4">c(x<sub>0</sub>) = Σ<sub>n=1</sub><sup>x<sub>0</sub></sup> ad(n)</div>
+                        <p>where a is the adventurer-specific multiplier, and d(n) is the level-based difficulty factor.</p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium mb-2 text-indigo-600">Total Cost Function</h3>
+                        <p class="mb-2">The total cost to level up from level 1 to level x is given by:</p>
+                        <div class="formula text-center text-xl my-4">f(x<sub>0</sub>) = Σ<sub>n=1</sub><sup>x<sub>0</sub></sup> c(n)</div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium mb-2 text-indigo-600">Difficulty Factor</h3>
+                        <p class="mb-2">The difficulty factor d(x) varies based on the level range:</p>
+                        <ul class="list-disc pl-6 space-y-1">
+                            <li>d(x) = 1 for 0 &lt; x ≤ 10</li>
+                            <li>d(x) = 10 for 10 &lt; x ≤ 40</li>
+                            <li>d(x) = 40 for 40 &lt; x ≤ 75</li>
+                            <li>d(x) = 75 for 75 &lt; x ≤ 100</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-medium mb-2 text-indigo-600">Adventurer Values</h3>
+                        <p class="mb-2">The 'a' value varies by adventurer:</p>
+                        <ul class="list-disc pl-6 space-y-1">
+                            <li>Piggy: a = 2</li>
+                            <li>Panda: a = 3</li>
+                            <li>Bear: a = 4</li>
+                            <li>Dragon Girl: a = 5</li>
+                            <li>Wukong: a = 5</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="text-center py-4 text-gray-600 text-sm">
+            <p>Adventurer Leveling Cost Calculator - Made with ❤️ for adventurers</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select all adventurer icons
+            const adventurerIcons = document.querySelectorAll('.adventurer-icon');
+            const adventurerRadios = document.querySelectorAll('.adventure-select');
+            
+            // Add click event to adventurer icons
+            adventurerIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    // Remove selected class from all icons
+                    adventurerIcons.forEach(i => i.classList.remove('selected'));
+                    
+                    // Add selected class to clicked icon
+                    this.classList.add('selected');
+                    
+                    // Find and check the corresponding radio button
+                    const adventurerValue = this.dataset.adventurer;
+                    document.querySelector(`input[name="adventurer"][value="${adventurerValue}"]`).checked = true;
+                });
+            });
+            
+            // Calculate button click handler
+            document.getElementById('calculateBtn').addEventListener('click', calculateCost);
+            
+            // Initialize the calculator
+            function calculateCost() {
+                // Clear previous error messages
+                hideError();
+                
+                // Get input values
+                const startLevel = parseInt(document.getElementById('startLevel').value);
+                const targetLevel = parseInt(document.getElementById('targetLevel').value);
+                
+                // Validate inputs
+                if (isNaN(startLevel) || isNaN(targetLevel)) {
+                    showError('Please enter valid level values.');
+                    return;
+                }
+                
+                if (startLevel < 1 || startLevel > 100 || targetLevel < 1 || targetLevel > 100) {
+                    showError('Levels must be between 1 and 100.');
+                    return;
+                }
+                
+                if (startLevel >= targetLevel) {
+                    showError('Target level must be greater than starting level.');
+                    return;
+                }
+                
+                // Get selected adventurer and a value
+                const selectedAdventurer = document.querySelector('input[name="adventurer"]:checked').value;
+                let adv_cost_mult;
+                let adventurerName;
+                
+                switch (selectedAdventurer) {
+                    case 'piggy':
+                        adv_cost_mult = 2;
+                        adventurerName = 'Piggy';
+                        break;
+                    case 'panda':
+                        adv_cost_mult = 3;
+                        adventurerName = 'Panda';
+                        break;
+                    case 'bear':
+                        adv_cost_mult = 4;
+                        adventurerName = 'Bear';
+                        break;
+                    case 'dragongirl':
+                        adv_cost_mult = 5;
+                        adventurerName = 'Dragon Girl';
+                        break;
+                    case 'wukong':
+                        adv_cost_mult = 5;
+                        adventurerName = 'Wukong';
+                        break;
+                }
+                
+                // Calculate total cost and show results
+                calculateAndDisplayResults(startLevel, targetLevel, adv_cost_mult, adventurerName);
+            }
+            
+            function calculateAndDisplayResults(startLevel, targetLevel, adv_cost_mult, adventurerName) {
+                // Calculate cost from startLevel to targetLevel
+                let totalCost = 0;
+                const steps = [];
+                
+                // For each level in the range
+                for (let level = startLevel; level < targetLevel; level++) {
+                    const levelUpCost = calculateLevelUpCost(level, adv_cost_mult);
+                    totalCost += levelUpCost;
+                    
+                    // Store calculation step
+                    steps.push({
+                        fromLevel: level,
+                        toLevel: level + 1,
+                        dValue: getDValue(level),
+                        cost: levelUpCost
+                    });
+                }
+                
+                // Display results
+                document.getElementById('resultAdventurer').textContent = `${adventurerName} (a = ${adv_cost_mult})`;
+                document.getElementById('resultCost').textContent = totalCost.toLocaleString();
+                document.getElementById('resultStartLevel').textContent = startLevel;
+                document.getElementById('resultTargetLevel').textContent = targetLevel;
+                
+                // Display calculation steps
+                const stepsContainer = document.getElementById('calculationSteps');
+                stepsContainer.innerHTML = '';
+                
+                steps.forEach(step => {
+                    const stepEl = document.createElement('div');
+                    stepEl.className = 'calculation-step p-3';
+                    stepEl.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="font-medium">Level ${step.fromLevel} → ${step.toLevel}</span>
+                                <span class="text-gray-500 text-sm ml-2">d(${step.fromLevel}) = ${step.dValue}</span>
+                            </div>
+                            <div class="font-medium text-indigo-600">${step.cost.toLocaleString()}</div>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">
+                            c(${step.fromLevel}) = ${adv_cost_mult} × ${step.dValue} = ${step.cost}
+                        </div>
+                    `;
+                    stepsContainer.appendChild(stepEl);
+                });
+                
+                // Show results container
+                document.getElementById('resultsContainer').classList.remove('hidden');
+                
+                // Scroll to results
+                document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            function calculateLevelUpCost(level, adv_cost_mult) {
+                let cost = 0;
+                for (let n = 1; n <= level; n++) {
+                    cost += adv_cost_mult * getDValue(n);
+                }
+                return cost;
+            }
+            
+            function getDValue(level) {
+                // Determine d(x) based on level
+                if (level <= 10) {
+                    return 1;
+                } else if (level <= 40) {
+                    return 2;
+                } else if (level <= 75) {
+                    return 3;
+                } else {
+                    return 4;
+                }
+            }
+            
+            function showError(message) {
+                const errorContainer = document.getElementById('errorContainer');
+                const errorMessage = document.getElementById('errorMessage');
+                
+                errorMessage.textContent = message;
+                errorContainer.classList.remove('hidden');
+                
+                // Hide results if there's an error
+                document.getElementById('resultsContainer').classList.add('hidden');
+            }
+            
+            function hideError() {
+                document.getElementById('errorContainer').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
