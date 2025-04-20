@@ -44,10 +44,16 @@
         .adventure-select {
             display: none;
         }
-    </style>
-</head>
-<body class="min-h-screen p-4">
-    <div class="max-w-4xl mx-auto">
+        .adventurer-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin: 0 auto 0.5rem auto;
+        }
+        </style>
+    </head>
+    <body class="min-h-screen p-4">
+        <div class="max-w-4xl mx-auto">
         <header class="text-center py-6">
             <h1 class="text-3xl font-bold text-indigo-700 mb-2">Adventurer Leveling Cost Calculator</h1>
             <p class="text-gray-600">Calculate the cost to level up your adventurers based on the given formulas</p>
@@ -59,51 +65,50 @@
                 
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                     <label class="cursor-pointer text-center">
-                        <input type="radio" name="adventurer" value="piggy" class="adventure-select" checked>
-                        <div class="adventurer-icon rounded-lg p-3 selected" data-adventurer="piggy">
-                            <i class="fas fa-piggy-bank text-3xl text-pink-500 mb-2"></i>
-                            <div class="text-sm font-medium">Piggy</div>
-                            <div class="text-xs text-gray-500">a = 2</div>
-                        </div>
+                    <input type="radio" name="adventurer" value="piggy" class="adventure-select" checked>
+                    <div class="adventurer-icon rounded-lg p-3 selected" data-adventurer="piggy">
+                        <img src="assets/piggy.webp" alt="Piggy" class="adventurer-img" />
+                        <div class="text-sm font-medium">Piggy</div>
+                        <div class="text-xs text-gray-500">cost scaling = 2</div>
+                    </div>
                     </label>
                     
                     <label class="cursor-pointer text-center">
-                        <input type="radio" name="adventurer" value="panda" class="adventure-select">
-                        <div class="adventurer-icon rounded-lg p-3" data-adventurer="panda">
-                            <i class="fas fa-paw text-3xl text-black mb-2"></i>
-                            <div class="text-sm font-medium">Panda</div>
-                            <div class="text-xs text-gray-500">a = 3</div>
-                        </div>
+                    <input type="radio" name="adventurer" value="panda" class="adventure-select">
+                    <div class="adventurer-icon rounded-lg p-3" data-adventurer="panda">
+                        <img src="assets/panda.webp" alt="Panda" class="adventurer-img" />
+                        <div class="text-sm font-medium">Panda</div>
+                        <div class="text-xs text-gray-500">cost scaling = 3</div>
+                    </div>
                     </label>
                     
                     <label class="cursor-pointer text-center">
-                        <input type="radio" name="adventurer" value="bear" class="adventure-select">
-                        <div class="adventurer-icon rounded-lg p-3" data-adventurer="bear">
-                            <i class="fas fa-dog text-3xl text-yellow-700 mb-2"></i>
-                            <div class="text-sm font-medium">Bear</div>
-                            <div class="text-xs text-gray-500">a = 4</div>
-                        </div>
+                    <input type="radio" name="adventurer" value="bear" class="adventure-select">
+                    <div class="adventurer-icon rounded-lg p-3" data-adventurer="bear">
+                        <img src="assets/bear.webp" alt="Bear" class="adventurer-img" />
+                        <div class="text-sm font-medium">Bear</div>
+                        <div class="text-xs text-gray-500">cost scaling = 4</div>
+                    </div>
                     </label>
                     
                     <label class="cursor-pointer text-center">
-                        <input type="radio" name="adventurer" value="dragongirl" class="adventure-select">
-                        <div class="adventurer-icon rounded-lg p-3" data-adventurer="dragongirl">
-                            <i class="fas fa-dragon text-3xl text-purple-600 mb-2"></i>
-                            <div class="text-sm font-medium">Dragon Girl</div>
-                            <div class="text-xs text-gray-500">a = 5</div>
-                        </div>
+                    <input type="radio" name="adventurer" value="dragongirl" class="adventure-select">
+                    <div class="adventurer-icon rounded-lg p-3" data-adventurer="dragongirl">
+                        <img src="assets/dragongirl.webp" alt="Dragon Girl" class="adventurer-img" />
+                        <div class="text-sm font-medium">Dragon Girl</div>
+                        <div class="text-xs text-gray-500">cost scaling = 5</div>
+                    </div>
                     </label>
                     
                     <label class="cursor-pointer text-center">
-                        <input type="radio" name="adventurer" value="wukong" class="adventure-select">
-                        <div class="adventurer-icon rounded-lg p-3" data-adventurer="wukong">
-                            <i class="fas fa-khanda text-3xl text-red-600 mb-2"></i>
-                            <div class="text-sm font-medium">Wukong</div>
-                            <div class="text-xs text-gray-500">a = 5</div>
-                        </div>
+                    <input type="radio" name="adventurer" value="wukong" class="adventure-select">
+                    <div class="adventurer-icon rounded-lg p-3" data-adventurer="wukong">
+                        <img src="assets/wukong.webp" alt="Wukong" class="adventurer-img" />
+                        <div class="text-sm font-medium">Wukong</div>
+                        <div class="text-xs text-gray-500">cost scaling = 5</div>
+                    </div>
                     </label>
-                </div>
-                
+                </div>                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label for="startLevel" class="block text-sm font-medium text-gray-700 mb-1">Starting Level (1-100)</label>
@@ -177,7 +182,7 @@
                         <h3 class="text-lg font-medium mb-2 text-indigo-600">Cost Function</h3>
                         <p class="mb-2">The cost to level up from level x to level x+1 is given by:</p>
                         <div class="formula text-center text-xl my-4">c(x<sub>0</sub>) = Σ<sub>n=1</sub><sup>x<sub>0</sub></sup> ad(n)</div>
-                        <p>where a is the adventurer-specific multiplier, and d(n) is the level-based difficulty factor.</p>
+                        <p>where n represents a level between 1 and the target level x0, a is the adventurer-specific multiplier, and d(n) is the level-based scaling factor.</p>
                     </div>
                     
                     <div class="mb-6">
@@ -188,12 +193,12 @@
                     
                     <div class="mb-6">
                         <h3 class="text-lg font-medium mb-2 text-indigo-600">Difficulty Factor</h3>
-                        <p class="mb-2">The difficulty factor d(x) varies based on the level range:</p>
+                        <p class="mb-2">The scaling factor d(n) varies based on the level range:</p>
                         <ul class="list-disc pl-6 space-y-1">
-                            <li>d(x) = 1 for 0 &lt; x ≤ 10</li>
-                            <li>d(x) = 10 for 10 &lt; x ≤ 40</li>
-                            <li>d(x) = 40 for 40 &lt; x ≤ 75</li>
-                            <li>d(x) = 75 for 75 &lt; x ≤ 100</li>
+                            <li>d(n) = 1 for 0 &lt; n ≤ 10</li>
+                            <li>d(n) = 10 for 10 &lt; n ≤ 40</li>
+                            <li>d(n) = 40 for 40 &lt; n ≤ 75</li>
+                            <li>d(n) = 75 for 75 &lt; n ≤ 100</li>
                         </ul>
                     </div>
                     
