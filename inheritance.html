@@ -155,7 +155,10 @@
     <div class="max-w-7xl mx-auto">
         <header class="text-center py-6">
             <h1 class="text-3xl font-bold text-indigo-700 mb-2">Research Tree Calculator</h1>
+            <p class="text-gray-600">Credit for the data goes to Crimxona. Data: https://docs.google.com/spreadsheets/d/1-6jfo5xxtwxr1Ax9VIU3exyk3JSMYK70anT0IOVu6bo</p>
+            <p class="text-gray-600">__</p>
             <p class="text-gray-600">Select your current research ('Save Baseline'), then select target levels to see the cost difference.</p>
+            <p class="text-gray-600">Click on the nodes to increase/decrease levels.</p>
         </header>
 
         <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -163,7 +166,7 @@
                 <div class="card p-6 mb-8">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                             <h2 class="text-xl font-semibold text-indigo-600 border-b pb-2 mb-4">Select Hero</h2>
+                             <h2 class="text-xl font-semibold text-indigo-600 border-b pb-2 mb-4">Select Inheritance Tree</h2>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <button class="hero-btn p-3 rounded-lg text-center selected" data-hero="Skeleton">Skeleton</button>
                                 <button class="hero-btn p-3 rounded-lg text-center" data-hero="Knight">Knight</button>
@@ -184,13 +187,16 @@
 
             <div class="md:col-span-1 flex flex-col gap-2">
                 <div id="baselineContainer" class="card results-card sticky top-10 z-10">
-                    <div class="text-right ml-4 flex-shrink-0">
+                    <div class="text-right ml-4 flex-shrink-0 flex items-center gap-20">
+                        <button id="resetTreeBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors">
+                            Reset
+                        </button>
                         <button id="saveBaselineBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors">
                             Save Current Baseline
                         </button>
-                        <div id="baselineInfo" class="mt-2 baseline-info">
-                            Baseline Cost:<br> Gold: 0 M | Books: 0 | Time: 0 sec
-                        </div>
+                    </div>
+                    <div id="baselineInfo" class="mt-2 baseline-info">
+                        Baseline Cost:<br> Gold: 0 M | Books: 0 | Time: 0 sec
                     </div>
                 </div>
                 <div style="height: 32px;"></div>
@@ -206,6 +212,10 @@
                         <div class="rounded-lg p-4">
                             <div class="text-sm">Books</div>
                             <div id="resultBooks" class="text-2xl font-medium text-blue-300">0</div>
+                        </div>
+                        <div class="rounded-lg p-4">
+                            <div class="text-sm">Pacts</div>
+                            <div id="resultPacts" class="text-2xl font-medium text-blue-300">0</div>
                         </div>
                         <div class="rounded-lg p-4">
                             <div class="text-sm">Time</div>
@@ -322,6 +332,7 @@
         let baselineLevels = {}; // { nodeId: level }
         let baselineGoldM = 0;
         let baselineBooks = 0;
+        let baselinePacts = 0;
         let baselineTimeS = 0;
 
         // --- Utility Functions (parseTime, formatTime, parseCsvData, mapJsonToCsvNames, getNodeName) ---
@@ -356,7 +367,7 @@
              const lines = csvText.trim().split('\n');
              const data = {}; // { nodeCsvName: { heroType: { level: { books, goldM, timeS } } } }
              const colIndices = {
-                 Node: 0, Books: 2,
+                 Node: 0, Pacts:1, Books: 2,
                  Skeleton_Gold: 3, Skeleton_Time: 4, Knight_Gold: 5, Knight_Time: 6,
                  Ranger_Gold: 7, Ranger_Time: 8, Ghost_Gold: 9, Ghost_Time: 10
              };
@@ -376,13 +387,14 @@
                  }
                  if (level === 0) continue;
                  if (!data[nodeBaseName]) data[nodeBaseName] = {};
+                 const pacts = parseInt(values[colIndices.Pacts], 10) || 0;
                  const books = parseInt(values[colIndices.Books], 10) || 0;
                  Object.keys(heroMap).forEach(hero => {
                      if (!data[nodeBaseName][hero]) data[nodeBaseName][hero] = {};
                      const goldColIdx = colIndices[`${hero}_Gold`]; const timeColIdx = colIndices[`${hero}_Time`];
                      const goldM = parseFloat(values[goldColIdx]) || 0;
                      const timeStr = values[timeColIdx] || "0:0:0"; const timeS = parseTime(timeStr);
-                     data[nodeBaseName][hero][level] = { books, goldM, timeS };
+                     data[nodeBaseName][hero][level] = { books, pacts, goldM, timeS };
                  });
              } return data;
          }
@@ -627,25 +639,26 @@
             `;
         }
 
-         function addEventListeners() {
-            document.getElementById('saveBaselineBtn').addEventListener('click', saveBaseline);
-            
-            document.querySelectorAll('.level-up-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const nodeId = this.dataset.nodeId;
-                    // console.log(`Level up clicked for ${nodeId}`);
-                    handleLevelChange(this.parentElement.parentElement, nodeId, 'up');
-                });
+        function addEventListeners() {
+        document.getElementById('saveBaselineBtn').addEventListener('click', saveBaseline);
+        document.getElementById('resetTreeBtn').addEventListener('click', buildTreeUI);
+        
+        document.querySelectorAll('.level-up-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const nodeId = this.dataset.nodeId;
+                // console.log(`Level up clicked for ${nodeId}`);
+                handleLevelChange(this.parentElement.parentElement, nodeId, 'up');
             });
-            
-            document.querySelectorAll('.level-down-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const nodeId = this.dataset.nodeId;
-                    // console.log(`Level down clicked for ${nodeId}`);
-                    handleLevelChange(this.parentElement.parentElement, nodeId, 'down');
-                });
+        });
+        
+        document.querySelectorAll('.level-down-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const nodeId = this.dataset.nodeId;
+                // console.log(`Level down clicked for ${nodeId}`);
+                handleLevelChange(this.parentElement.parentElement, nodeId, 'down');
             });
-         }
+        });
+        }
 
         function handleLevelChange(divContainer, nodeId, direction) {
             // console.log("handleLevelChange called with divContainer:", divContainer, "Direction:", direction);
@@ -683,30 +696,24 @@
             }
 
             if (newLevel > baseLevel && !areRequirementsMet(nodeId, newLevel)) { // Check reqs only if increasing level
-                if (confirm("Requirements not met to reach this level!\n\nWould you like to automatically set all required nodes to their max level?")) {
-                    // Recursively set all requirements to max level
-                    function forceRequirements(nodeId) {
-                        const node = nodeMap[nodeId];
-                        if (!node || !node.requirements) return;
-                        node.requirements.forEach(reqId => {
-                            const reqNode = nodeMap[reqId];
-                            if (reqNode) {
-                                let reqMaxLevel = parseInt(reqNode.progress.split('/')[1], 10);
-                                if (reqMaxLevel == 3) reqMaxLevel = 1; // Special case for Middle nodes
-                                if (selectedLevels[reqId] < reqMaxLevel) {
-                                    selectedLevels[reqId] = reqMaxLevel;
-                                    updateNodeState(reqId, reqMaxLevel); // Update the state of the requirement node
-                                    forceRequirements(reqId);
-                                }
+                // Recursively set all requirements to max level
+                function forceRequirements(nodeId) {
+                    const node = nodeMap[nodeId];
+                    if (!node || !node.requirements) return;
+                    node.requirements.forEach(reqId => {
+                        const reqNode = nodeMap[reqId];
+                        if (reqNode) {
+                            let reqMaxLevel = parseInt(reqNode.progress.split('/')[1], 10);
+                            if (reqMaxLevel == 3) reqMaxLevel = 1; // Special case for Middle nodes
+                            if (selectedLevels[reqId] < reqMaxLevel) {
+                                selectedLevels[reqId] = reqMaxLevel;
+                                updateNodeState(reqId, reqMaxLevel); // Update the state of the requirement node
+                                forceRequirements(reqId);
                             }
-                        });
-                    }
-                    forceRequirements(nodeId);
-                } else {
-                    divContainer.value = selectedLevels[nodeId]; // Revert to previous valid level
-                    alert("Requirements not met to reach this level!");
-                    return; // Stop processing this change
+                        }
+                    });
                 }
+                forceRequirements(nodeId);
             }
 
             if (selectedLevels[nodeId] !== newLevel) {
@@ -771,30 +778,32 @@
          * @returns {object} - { goldM, books, timeS }
          */
         function calculateCostForState(levelsMap) {
-             let stateGoldM = 0;
-             let stateBooks = 0;
-             let stateTimeS = 0;
+            let stateGoldM = 0;
+            let stateBooks = 0;
+            let statePacts = 0;
+            let stateTimeS = 0;
 
-             Object.keys(levelsMap).forEach(nodeId => {
-                 const targetLevel = levelsMap[nodeId];
-                 if (targetLevel > 0) {
-                     const nodeData = parsedCostData[nodeId];
-                     if (!nodeData || !nodeData[selectedHero]) { return; } // Skip if no data
-                     const heroNodeData = nodeData[selectedHero];
+            Object.keys(levelsMap).forEach(nodeId => {
+                const targetLevel = levelsMap[nodeId];
+                if (targetLevel > 0) {
+                    const nodeData = parsedCostData[nodeId];
+                    if (!nodeData || !nodeData[selectedHero]) { return; } // Skip if no data
+                    const heroNodeData = nodeData[selectedHero];
 
-                     for (let level = 1; level <= targetLevel; level++) {
-                         if (heroNodeData[level]) {
-                             stateGoldM += heroNodeData[level].goldM || 0;
-                             stateTimeS += heroNodeData[level].timeS || 0;
-                             stateBooks += heroNodeData[level].books || 0;
-                         } else {
-                             // Warning for missing data within the required range
-                             console.warn(`(calcCost) Missing cost data for node ${nodeId}, hero ${selectedHero}, level ${level}`);
-                         }
-                     }
-                 }
-             });
-             return { goldM: stateGoldM, books: stateBooks, timeS: stateTimeS };
+                    for (let level = 1; level <= targetLevel; level++) {
+                        if (heroNodeData[level]) {
+                            stateGoldM += heroNodeData[level].goldM || 0;
+                            stateTimeS += heroNodeData[level].timeS || 0;
+                            stateBooks += heroNodeData[level].books || 0;
+                            statePacts += heroNodeData[level].pacts || 0;
+                        } else {
+                            // Warning for missing data within the required range
+                            console.warn(`(calcCost) Missing cost data for node ${nodeId}, hero ${selectedHero}, level ${level}`);
+                        }
+                    }
+                }
+            });
+            return { goldM: stateGoldM, books: stateBooks, pacts: statePacts, timeS: stateTimeS };
         }
 
         // Main function to calculate and display the difference from baseline
@@ -805,11 +814,13 @@
              // 2. Calculate the difference from the baseline costs
              const displayGoldM = Math.max(0, targetCosts.goldM - baselineGoldM);
              const displayBooks = Math.max(0, targetCosts.books - baselineBooks);
+             const displayPacts = Math.max(0, targetCosts.pacts - baselinePacts);
              const displayTimeS = Math.max(0, targetCosts.timeS - baselineTimeS);
 
              // 3. Display results
              document.getElementById('resultGold').textContent = displayGoldM.toFixed(3);
              document.getElementById('resultBooks').textContent = displayBooks.toLocaleString();
+             document.getElementById('resultPacts').textContent = displayPacts.toLocaleString();
              document.getElementById('resultTime').textContent = formatTime(displayTimeS);
         }
 
@@ -822,6 +833,7 @@
              const baselineCosts = calculateCostForState(baselineLevels);
              baselineGoldM = baselineCosts.goldM;
              baselineBooks = baselineCosts.books;
+             baselinePacts = baselineCosts.pacts;
              baselineTimeS = baselineCosts.timeS;
 
              // Update baseline info display
