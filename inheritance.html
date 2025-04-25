@@ -185,9 +185,10 @@
                 </div>
             </div>
 
-            <div class="md:col-span-1 flex flex-col gap-2">
-                <div id="baselineContainer" class="card results-card sticky top-10 z-10">
-                    <div class="text-right ml-4 flex-shrink-0 flex items-center gap-20">
+            <!-- Responsive: On mobile, move this container between the two main cards -->
+            <div class="md:col-span-1 flex flex-col gap-2 md:static md:order-none order-2 w-full">
+                <div id="baselineContainer" class="card results-card md:sticky md:top-10 z-10 w-full">
+                    <div class="text-right ml-4 flex-shrink-0 flex items-center gap-4 md:gap-20">
                         <button id="resetTreeBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors">
                             Reset
                         </button>
@@ -199,8 +200,8 @@
                         Baseline Cost:<br> Gold: 0 M | Books: 0 | Time: 0 sec
                     </div>
                 </div>
-                <div style="height: 32px;"></div>
-                <div id="resultsContainer" class="card results-card sticky top-40">
+                <div style="height: 32px;" class="hidden md:block"></div>
+                <div id="resultsContainer" class="card results-card md:sticky md:top-40 w-full">
                     <div class="bg-indigo-500 text-white py-3 px-6">
                         <h2 class="text-xl font-semibold">Cost from Baseline</h2>
                     </div>
