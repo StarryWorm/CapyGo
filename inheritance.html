@@ -52,6 +52,30 @@
             opacity: 0.8;
             transition: opacity 0.3s ease, background-color 0.3s ease;
             color: #e5e7eb;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 100%;
+        }
+        @media (max-width: 640px) {
+            .tree-tier {
+            flex-wrap: wrap;
+            }
+            .tree-branch, .tree-main {
+            flex-basis: 30% !important;
+            max-width: 30%;
+            min-width: 0;
+            }
+            .node {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 0.5rem;
+            }
+            .node-level {
+            flex-direction: column;
+            }
+            .level-controls {
+            flex-direction: column;
+            }
         }
         .node.enabled {
             border: 1px solid #6366f1;
@@ -65,15 +89,6 @@
         .node.target-above-baseline {
             background-color: #1e293b; /* slate-800 */
             border-color: #818cf8; /* indigo-400 */
-        }
-        .node-input {
-            width: 60px;
-            margin-left: 0.5rem;
-            text-align: right;
-            border: 1px solid #374151;
-            border-radius: 0.25rem;
-            background-color: #181a20;
-            color: #e5e7eb;
         }
         .node-name {
             font-weight: 500;
@@ -185,7 +200,6 @@
                 </div>
             </div>
 
-            <!-- Responsive: On mobile, move this container between the two main cards -->
             <div class="md:col-span-1 flex flex-col gap-2 md:static md:order-none order-2 w-full">
                 <div id="baselineContainer" class="card results-card md:sticky md:top-10 z-10 w-full">
                     <div class="text-right ml-4 flex-shrink-0 flex items-center gap-4 md:gap-20">
