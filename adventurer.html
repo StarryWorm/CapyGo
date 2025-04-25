@@ -8,38 +8,41 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
     <style>
         body {
-            background-color: #f3f4f6;
-            color: #1f2937;
+            background-color: #18181b;
+            color: #f3f4f6;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .formula {
             font-family: 'Times New Roman', Times, serif;
             font-style: italic;
+            color: #a5b4fc;
         }
         .card {
-            background-color: white;
+            background-color: #232336;
             border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
         .adventurer-icon {
             transition: all 0.3s ease;
+            background-color: #27272a;
         }
         .adventurer-icon:hover {
             transform: scale(1.05);
+            background-color: #312e81;
         }
         .selected {
-            border: 2px solid #4f46e5;
-            background-color: #eff6ff;
+            border: 2px solid #818cf8;
+            background-color: #312e81;
             transform: scale(1.05);
         }
         .calculation-step:nth-child(odd) {
-            background-color: #f9fafb;
+            background-color: #1e293b;
         }
         input:focus, select:focus {
             outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            border-color: #818cf8;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
         }
         .adventure-select {
             display: none;
@@ -49,6 +52,7 @@
             height: 80px;
             object-fit: contain;
             margin: 0 auto 0.5rem auto;
+            filter: drop-shadow(0 0 4px #818cf8);
         }
         </style>
     </head>
