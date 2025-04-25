@@ -115,13 +115,13 @@
                 </div>                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <label for="startLevel" class="block text-sm font-medium text-gray-700 mb-1">Starting Level (1-100)</label>
-                        <input type="number" id="startLevel" min="1" max="100" value="1" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                        <label for="startLevel" class="block text-sm font-medium text-gray-500 mb-1">Starting Level (1-100)</label>
+                        <input type="number" id="startLevel" min="1" max="100" value="1" class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900">
                     </div>
                     
                     <div>
-                        <label for="targetLevel" class="block text-sm font-medium text-gray-700 mb-1">Target Level (1-100)</label>
-                        <input type="number" id="targetLevel" min="1" max="100" value="100" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                        <label for="targetLevel" class="block text-sm font-medium text-gray-500 mb-1">Target Level (1-100)</label>
+                        <input type="number" id="targetLevel" min="1" max="100" value="100" class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900">
                     </div>
                 </div>
                 
@@ -231,7 +231,30 @@
             // Select all adventurer icons
             const adventurerIcons = document.querySelectorAll('.adventurer-icon');
             const adventurerRadios = document.querySelectorAll('.adventure-select');
-            
+
+            function clampInputValue(input) {
+                let value = parseInt(input.value, 10);
+                if (isNaN(value)) return;
+                if (value < 1) input.value = 1;
+                if (value > 100) input.value = 100;
+                if (input.id === 'startLevel') {
+                    const targetValue = parseInt(document.getElementById('targetLevel').value, 10);
+                    if (!isNaN(targetValue) && value >= targetValue) {
+                        input.value = Math.max(1, targetValue - 1);
+                        return;
+                    }
+                }
+            }
+
+            const startLevelInput = document.getElementById('startLevel');
+            const targetLevelInput = document.getElementById('targetLevel');
+
+            startLevelInput.addEventListener('input', function() {
+                clampInputValue(this);
+            });
+            targetLevelInput.addEventListener('input', function() {
+                clampInputValue(this);
+            });
             // Add click event to adventurer icons
             adventurerIcons.forEach(icon => {
                 icon.addEventListener('click', function() {
