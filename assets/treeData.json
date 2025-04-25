@@ -1,0 +1,568 @@
+{
+    "name": "Research Tree",
+    "nodes": [
+      {
+        "id": "level_1",
+        "name": {
+            "Skeleton": "Bonelet",
+            "Knight": "Little Knight",
+            "Ranger": "Scout",
+            "Ghost": "Ghost Doll"
+        },
+        "tier": "I",
+        "progress": "0/1",
+        "completed": false,
+        "requirements": []
+      },
+      {
+        "id": "health_1",
+        "name": "Health",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["level_1"],
+        "position": "left"
+      },
+      {
+        "id": "attack_1",
+        "name": "Attack",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["health_1"],
+        "position": "left"
+      },
+      {
+        "id": "defense_1",
+        "name": "Defense",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["attack_1"],
+        "position": "left"
+      },
+      {
+        "id": "right_health_1",
+        "name": "Enhanced Health",
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["level_1"],
+        "position": "right"
+      },
+      {
+        "id": "right_attack_1",
+        "name": "Enhanced Attack",
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_health_1"],
+        "position": "right"
+      },
+      {
+        "id": "right_defense_1",
+        "name": "Enhanced Defense",
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_attack_1"],
+        "position": "right"
+      },
+      {
+        "id": "middle_1",
+        "name": {
+            "Skeleton": "Skeleton Wave",
+            "Knight": "Spear Verdict",
+            "Ranger": "Precision Shot",
+            "Ghost": "Element Mastery"
+        },
+        "progress": "0/3",
+        "completed": false,
+        "requirements": ["right_attack_1"],
+        "position": "center"
+      },
+      {
+        "id": "level_2",
+        "name": {
+            "Skeleton": "Skeleton Recruit",
+            "Knight": "Knight",
+            "Ranger": "Forest Ranger",
+            "Ghost": "Coward"
+        },
+        "tier": "II",
+        "progress": "0/3",
+        "completed": false,
+        "requirements": ["defense_1", "right_defense_1"]
+      },
+      {
+        "id": "health_2",
+        "name": "Health",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["level_2"],
+        "position": "left"
+      },
+      {
+        "id": "attack_2",
+        "name": "Attack",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["health_2"],
+        "position": "left"
+      },
+      {
+        "id": "defense_2",
+        "name": "Defense",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["attack_2"],
+        "position": "left"
+      },
+      {
+        "id": "right_A_2",
+        "name": {
+            "Skeleton": "Enhanced Combo",
+            "Knight": "Combo ATK RES",
+            "Ranger": "Enhanced Basic ATK",
+            "Ghost": "Enhanced Skill"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["level_2"],
+        "position": "right"
+      },
+      {
+        "id": "right_B_2",
+        "name": {
+            "Skeleton": "Enhanced Basic Attack",
+            "Knight": "Pet RES",
+            "Ranger": "Enhanced Rage",
+            "Ghost": "Enhanced Fire"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_A_2"],
+        "position": "right"
+      },
+      {
+        "id": "right_C_2",
+        "name": {
+            "Skeleton": "Enhanced Crit",
+            "Knight": "Skill RES",
+            "Ranger": "Enhanced CRIT",
+            "Ghost": "Enhanced Lightning"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_B_2"],
+        "position": "right"
+      },
+      {
+        "id": "middle_2",
+        "name": {
+            "Skeleton": "Undead Force I",
+            "Knight": "Knight's Heart I",
+            "Ranger": "Ranger Shadow I",
+            "Ghost": "Ghost Soul I"
+        },
+        "progress": "0/3",
+        "completed": false,
+        "alert": true,
+        "requirements": ["right_B_2"],
+        "position": "center"
+      },
+      {
+        "id": "level_3",
+        "name": {
+            "Skeleton": "Skeleton Warrior",
+            "Knight": "Knight Captain",
+            "Ranger": "Tracker",
+            "Ghost": "Mischief"
+        },
+        "tier": "III",
+        "progress": "0/3",
+        "completed": false,
+        "requirements": ["defense_2", "right_C_2"]
+      },
+      {
+        "id": "health_3",
+        "name": "Health",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["level_3"],
+        "position": "left"
+      },
+      {
+        "id": "attack_3",
+        "name": "Attack",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["health_3"],
+        "position": "left"
+      },
+      {
+        "id": "defense_3",
+        "name": "Defense",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["attack_3"],
+        "position": "left"
+      },
+      {
+        "id": "right_A_3",
+        "name": {
+            "Skeleton": "Counter RES",
+            "Knight": "Enhanced Counter",
+            "Ranger": "Counter RES",
+            "Ghost": "Combo ATK RES"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["level_3"],
+        "position": "right"
+      },
+      {
+        "id": "right_B_3",
+        "name": {
+            "Skeleton": "Basic ATK RES",
+            "Knight": "Enhanced Basic ATK",
+            "Ranger": "Basic ATK RES",
+            "Ghost": "Counter RES"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_A_3"],
+        "position": "right"
+      },
+      {
+        "id": "right_C_3",
+        "name": {
+            "Skeleton": "Skill RES",
+            "Knight": "Enhanced CRIT",
+            "Ranger": "Skill RES",
+            "Ghost": "Basic ATK RES"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_B_3"],
+        "position": "right"
+      },
+      {
+        "id": "middle_3",
+        "name": {
+            "Skeleton": "Undead Force II",
+            "Knight": "Knight's Heart II",
+            "Ranger": "Ranger Shadow II",
+            "Ghost": "Ghost Soul II"
+        },
+        "progress": "0/3",
+        "completed": false,
+        "requirements": ["right_B_3"],
+        "position": "center"
+      },
+      {
+        "id": "level_4",
+        "name": {
+            "Skeleton": "Skeleton Lord",
+            "Knight": "Royal Knight",
+            "Ranger": "Windstrider",
+            "Ghost": "Crybaby"
+        },
+        "tier": "IV",
+        "progress": "0/1",
+        "completed": false,
+        "requirements": ["defense_3","right_C_3"]
+      },
+      {
+        "id": "health_4",
+        "name": "Health",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["level_4"],
+        "position": "left"
+      },
+      {
+        "id": "attack_4",
+        "name": "Attack",
+        "progress": "0/10",
+        "completed": false,
+        "alert": true,
+        "requirements": ["health_4"],
+        "position": "left"
+      },
+      {
+        "id": "defense_4",
+        "name": "Defense",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["attack_4"],
+        "position": "left"
+      },
+      {
+        "id": "right_A_4",
+        "name": "Enhanced Health",
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["level_4"],
+        "position": "right"
+      },
+      {
+        "id": "right_B_4",
+        "name": "Enhanced Attack",
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_A_4"],
+        "position": "right"
+      },
+      {
+        "id": "right_C_4",
+        "name": "Enhanced Defense",
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_B_4"],
+        "position": "right"
+      },
+      {
+        "id": "middle_4",
+        "name": {
+            "Skeleton": "Skeleton Combo",
+            "Knight": "Knight Oath",
+            "Ranger": "Weakness Strike",
+            "Ghost": "Savage Ghost"
+        },
+        "progress": "0/3",
+        "completed": false,
+        "requirements": ["right_B_4"],
+        "position": "center"
+      },
+      {
+        "id": "level_5",
+        "name": {
+            "Skeleton": "Avenger",
+            "Knight": "Templar Knight",
+            "Ranger": "Forest Guardian",
+            "Ghost": "Yawner"
+        },
+        "tier": "V",
+        "progress": "0/3",
+        "completed": false,
+        "requirements": ["defense_4", "right_C_4"]
+      },
+      {
+        "id": "health_5",
+        "name": "Health",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["level_5"],
+        "position": "left"
+      },
+      {
+        "id": "attack_5",
+        "name": "Attack",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["health_5"],
+        "position": "left"
+      },
+      {
+        "id": "defense_5",
+        "name": "Defense",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["attack_5"],
+        "position": "left"
+      },
+      {
+        "id": "right_A_5",
+        "name": {
+            "Skeleton": "Enhanced Combo",
+            "Knight": "Combo ATK RES",
+            "Ranger": "Enhanced Basic ATK",
+            "Ghost": "Enhanced Skill"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["level_5"],
+        "position": "right"
+      },
+      {
+        "id": "right_B_5",
+        "name": {
+            "Skeleton": "Enhanced Basic Attack",
+            "Knight": "Pet RES",
+            "Ranger": "Enhanced Rage",
+            "Ghost": "Enhanced Fire"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_A_5"],
+        "position": "right"
+      },
+      {
+        "id": "right_C_5",
+        "name": {
+            "Skeleton": "Enhanced Crit",
+            "Knight": "Skill RES",
+            "Ranger": "Enhanced CRIT",
+            "Ghost": "Enhanced Lightning"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_B_5"],
+        "position": "right"
+      },
+      {
+        "id": "middle_5",
+        "name": {
+            "Skeleton": "Undead Force III",
+            "Knight": "Knight's Heart III",
+            "Ranger": "Ranger Shadow III",
+            "Ghost": "Ghost Soul III"
+        },
+        "progress": "0/3",
+        "completed": false,
+        "requirements": ["right_B_5"],
+        "position": "center"
+      },
+      {
+        "id": "level_6",
+        "name": {
+            "Skeleton": "Bone King",
+            "Knight": "Legendary Knight",
+            "Ranger": "Legendary Range",
+            "Ghost": "Ghost Princess"
+        },
+        "tier": "VI",
+        "progress": "0/1",
+        "completed": false,
+        "requirements": ["defense_5", "right_C_5"]
+      },
+      {
+        "id": "health_6",
+        "name": "Health",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["level_6"],
+        "position": "left"
+      },
+      {
+        "id": "attack_6",
+        "name": "Attack",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["health_6"],
+        "position": "left"
+      },
+      {
+        "id": "defense_6",
+        "name": "Defense",
+        "progress": "0/10",
+        "completed": false,
+        "requirements": ["attack_6"],
+        "position": "left"
+      },
+      {
+        "id": "right_A_6",
+        "name": {
+            "Skeleton": "Counter RES",
+            "Knight": "Enhanced Counter",
+            "Ranger": "Counter RES",
+            "Ghost": "Combo ATK RES"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["level_6"],
+        "position": "right"
+      },
+      {
+        "id": "right_B_6",
+        "name": {
+            "Skeleton": "Basic ATK RES",
+            "Knight": "Enhanced Basic ATK",
+            "Ranger": "Basic ATK RES",
+            "Ghost": "Counter RES"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_A_6"],
+        "position": "right"
+      },
+      {
+        "id": "right_C_6",
+        "name": {
+            "Skeleton": "Skill RES",
+            "Knight": "Enhanced CRIT",
+            "Ranger": "Skill RES",
+            "Ghost": "Basic ATK RES"
+        },
+        "progress": "0/5",
+        "completed": false,
+        "requirements": ["right_B_6"],
+        "position": "right"
+      },
+      {
+        "id": "middle_6",
+        "name": {
+            "Skeleton": "Skeleton Guard",
+            "Knight": "Aegis Guard",
+            "Ranger": "Ranger Guard",
+            "Ghost": "Ghost Trick"
+        },
+        "progress": "0/3",
+        "completed": false,
+        "requirements": ["right_B_6"],
+        "position": "center"
+      }
+    ],
+    "displayStructure": {
+      "tiers": [
+        {
+          "tier": 1,
+          "main_node": "level_1",
+          "branch": ["health_1", "attack_1", "defense_1"],
+          "right_branch": ["right_health_1", "right_attack_1", "right_defense_1"],
+          "middle_node": "element_mastery"
+        },
+        {
+          "tier": 2,
+          "main_node": "level_2",
+          "branch": ["health_2", "attack_2", "defense_2"],
+          "right_branch": ["right_A_2", "right_B_2", "right_C_2"],
+          "middle_node": "coward_special"
+        },
+        {
+          "tier": 3,
+          "main_node": "level_3",
+          "branch": ["health_3", "attack_3", "defense_3"],
+          "right_branch": ["right_A_3", "right_B_3", "right_C_3"],
+          "middle_node": "middle_3"
+        },
+        {
+          "tier": 4,
+          "main_node": "level_4",
+          "branch": ["health_4", "attack_4", "defense_4"],
+          "right_branch": ["right_A_4", "right_B_4", "right_C_4"],
+          "middle_node": "middle_4"
+        },
+        {
+          "tier": 5,
+          "main_node": "level_5",
+          "branch": ["health_5", "attack_5", "defense_5"],
+          "right_branch": ["right_A_5", "right_B_5", "right_C_5"],
+          "middle_node": "middle_5"
+        },
+        {
+          "tier": 6,
+          "main_node": "level_6",
+          "branch": ["health_6", "attack_6", "defense_6"],
+          "right_branch": ["right_A_6", "right_B_6", "right_C_6"],
+          "middle_node": "middle_6"
+        }
+      ],
+      "status": {
+        "active": {
+          "description": "Orange/light colored line indicating an active, unlocked path",
+          "color": "orange"
+        },
+        "inactive": {
+          "description": "Gray/dark colored line indicating an inactive, locked path",
+          "color": "gray"
+        }
+      }
+    }
+  }
+  
