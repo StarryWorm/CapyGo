@@ -56,7 +56,7 @@
             width: 100%;
             max-width: 100%;
         }
-        @media (max-width: 640px) {
+        @media (max-width: 500px) {
             .tree-tier {
             flex-wrap: wrap;
             }
@@ -69,11 +69,9 @@
             width: 100%;
             max-width: 100%;
             margin-bottom: 0.5rem;
+            height: 150px;
             }
             .node-level {
-            flex-direction: column;
-            }
-            .level-controls {
             flex-direction: column;
             }
         }
@@ -149,10 +147,21 @@
             align-items: center;
             gap: 10px;
         }
-        .tree-branch { flex-basis: 30%; }
-        .tree-main { flex-basis: 30%; display: flex; flex-direction: column; align-items: center; }
-        .tree-middle { flex-basis: 10%; display: flex; justify-content: center; align-items: center; padding-top: 2rem; }
-        .connection-line { position: absolute; border-left: 2px solid #374151; height: 20px; left: 50%; }
+        .tree-branch {
+            flex-basis: 30%; 
+        }
+        .tree-main {
+            flex-basis: 30%;
+            /* display: flex;
+            flex-direction: column;
+            align-items: center; */
+        }
+        .connection-line {
+            position: absolute;
+            border-left: 2px solid #374151;
+            height: 20px;
+            left: 50%;
+        }
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { appearance: textfield; }
@@ -178,7 +187,7 @@
 
         <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="md:col-span-2">
-                <div class="card p-6 mb-8">
+                <div class="card p-4 mb-8">
                     <div class="flex justify-between items-start mb-4">
                         <div>
                              <h2 class="text-xl font-semibold text-indigo-600 border-b pb-2 mb-4">Select Inheritance Tree</h2>
@@ -191,8 +200,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card p-6">
+                <div class="card p-4">
                      <h2 class="text-xl font-semibold mb-4 text-indigo-600 border-b pb-2">Research Tree (<span id="selectedHeroName">Skeleton</span>)</h2>
                     <div id="treeContainer" class="space-y-6">
                         <p class="text-gray-500">Loading tree...</p>
@@ -618,16 +626,16 @@
             const currentLevel = selectedLevels[node.id] || 0;
             const nodeDisplayName = getNodeName(node, selectedHero);
             
-            let nodeClass = "node";
-            
             const elementHTML = `
-                <div class="${nodeClass}" id="node-${node.id}" data-node-id="${node.id}">
+                <div class="node" id="node-${node.id}" data-node-id="${node.id}">
                         <div class="flex justify-between items-center">
                             <div>
                                 <div class="node-name">${nodeDisplayName}</div>
                                 <div class="node-level">
-                                    <span class="current-level" data-current-level=${currentLevel}>${currentLevel}</span>
-                                    <span class="max-level" data-max-level=${maxLevel}>/ ${maxLevel}</span>
+                                    <div>
+                                        <span class="current-level" data-current-level=${currentLevel}>${currentLevel}</span>
+                                        <span class="max-level" data-max-level=${maxLevel}>/ ${maxLevel}</span>
+                                    </div>
                                     <div class="level-controls">
                                         <button class="level-up-btn" data-node-id="${node.id}" title="Increase Level">▲</button>
                                         <button class="level-down-btn" data-node-id="${node.id}" title="Decrease Level">▼</button>
