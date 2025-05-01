@@ -1,0 +1,19 @@
+<!-- /templates/node.html -->
+<div class="node" id="node-{{id}}" data-node-id="{{id}}">
+    <div class="flex justify-between items-center">
+      <div>
+        <div class="node-name">{{displayName}}</div>
+        <div class="node-level">
+          <div>
+            <span class="current-level" data-current-level="{{currentLevel}}">{{currentLevel}}</span>
+            <span class="max-level"     data-max-level="{{maxLevel}}">/ {{maxLevel}}</span>
+          </div>
+          <div class="level-controls">
+            <button class="level-up-btn"   data-node-id="{{id}}" title="Increase Level">▲</button>
+            <button class="level-down-btn" data-node-id="{{id}}" title="Decrease Level">▼</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
