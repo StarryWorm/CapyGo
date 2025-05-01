@@ -1,15 +1,71 @@
-// --- Data ---
+import {initNodeTemplates, createNodeElement, createEmptyNodeElement} from './templates/templates.js';
+
+// --- Global Variables ---
+// Data variables
 const treeData = { nodes: [] };
 const costDataCsv = "";
+let parsedCostData = {};
+let nodeMap = {};
+let heroMap = {
+    Skeleton: { goldCol: 'D', timeCol: 'E' }, Knight: { goldCol: 'F', timeCol: 'G' },
+    Ranger: { goldCol: 'H', timeCol: 'I' }, Ghost: { goldCol: 'J', timeCol: 'K' }
+};
+
+// State variables
+let tiers = [];
+let selectedHero = 'Skeleton';
+let maxLevels = {}; // { nodeId: maxLevel }
+let selectedLevels = {}; // { nodeId: level }
+
+// Baseline state variables
+let baselineLevels = {}; // { nodeId: level }
+let baselineGoldM = 0;
+let baselineBooks = 0;
+let baselinePacts = 0;
+let baselineTimeS = 0;
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await loadData();
+
+        if (!window.treeData || !window.costDataCsv) {
+            console.error("Data variables are missing after loadData!");
+            return;
+        }
+
+        const rawCsvData = parseCsvData(window.costDataCsv);
+
+        parsedCostData = mapJsonToCsvNames([...window.treeData.nodes], rawCsvData); // Pass a spreaded nodes array
+
+        await initNodeTemplates();
+        buildTreeUI();
+
+        document.getElementById('selectedHeroName').textContent = selectedHero;
+
+        document.querySelectorAll('.hero-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.hero-btn').forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                selectedHero = button.dataset.hero;
+                document.getElementById('selectedHeroName').textContent = selectedHero;
+                buildTreeUI();
+            });
+        });
+
+    } catch (error) {
+        console.error("Error during initialization/UI build:", error);
+        const container = document.getElementById('treeContainer');
+        if(container) container.innerHTML = '<p class="text-red-600 font-bold">Error initializing page. Check console.</p>';
+    }
+});
 
 // --- Dynamic Data Loading ---
-// Loads treeData and costDataCsv dynamically from external files
 async function loadData() {
-    const treeUrl = 'assets/treeData.json';
-    const costUrl = 'assets/costData.csv';
+    const treeUrl = './assets/treeData.json';
+    const costUrl = './assets/costData.csv';
 
     try {
-        // Fetch treeData (JSON)
         console.log(`Fetching ${treeUrl}...`);
         const treeResp = await fetch(treeUrl);
         console.log(`Tree Response Status: ${treeResp.status}`);
@@ -20,8 +76,7 @@ async function loadData() {
             treeJson = await treeResp.json();
         } catch (jsonError) {
             console.error('Error parsing tree JSON:', jsonError);
-            // Try reading as text for debugging if JSON parse fails
-            const rawText = await treeResp.text(); // Note: response body can only be read once
+            const rawText = await treeResp.text();
             console.error('Raw text received instead of JSON:', rawText);
             throw jsonError; // Rethrow original error
         }
@@ -47,63 +102,7 @@ async function loadData() {
     }
 }
 
-// --- Initialization (modified to wait for data) ---
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // console.log("DOMContentLoaded Start. window.treeData:", window.treeData);
-        await loadData();
-        // console.log("After loadData. window.treeData:", window.treeData);
-        // console.log("After loadData. window.treeData.nodes type:", typeof window.treeData?.nodes, " Is Array:", Array.isArray(window.treeData?.nodes));
-
-        if (!window.treeData || !window.costDataCsv) {
-            console.error("Data variables are missing after loadData!");
-            return;
-        }
-
-        // --- Check before processing ---
-        // console.log("Before parseCsvData. window.treeData.nodes type:", typeof window.treeData?.nodes, " Is Array:", Array.isArray(window.treeData?.nodes));
-        const rawCsvData = parseCsvData(window.costDataCsv);
-        // console.log("After parseCsvData. window.treeData.nodes type:", typeof window.treeData?.nodes, " Is Array:", Array.isArray(window.treeData?.nodes));
-
-        // --- Check before mapping ---
-        // console.log("Before mapJsonToCsvNames. window.treeData.nodes type:", typeof window.treeData?.nodes, " Is Array:", Array.isArray(window.treeData?.nodes));
-        parsedCostData = mapJsonToCsvNames([...window.treeData.nodes], rawCsvData); // Pass a spreaded nodes array
-        // console.log("After mapJsonToCsvNames. window.treeData.nodes type:", typeof window.treeData?.nodes, " Is Array:", Array.isArray(window.treeData?.nodes));
-        // console.log('Processed cost data structure:', parsedCostData);
-
-        // --- Check right before UI build ---
-        // console.log("Before buildTreeUI. window.treeData.nodes type:", typeof window.treeData?.nodes, " Is Array:", Array.isArray(window.treeData?.nodes));
-        buildTreeUI(); // buildTreeUI will do its own check now too
-
-        // console.log("After buildTreeUI call.");
-        document.getElementById('selectedHeroName').textContent = selectedHero;
-
-    } catch (error) {
-        console.error("Error during initialization/UI build:", error);
-        const container = document.getElementById('treeContainer');
-        if(container) container.innerHTML = '<p class="text-red-600 font-bold">Error initializing page. Check console.</p>';
-    }
-});
-
-let parsedCostData = {};
-let nodeMap = {};
-let heroMap = {
-    Skeleton: { goldCol: 'D', timeCol: 'E' }, Knight: { goldCol: 'F', timeCol: 'G' },
-    Ranger: { goldCol: 'H', timeCol: 'I' }, Ghost: { goldCol: 'J', timeCol: 'K' }
-};
-let selectedHero = 'Skeleton';
-let maxLevels = {}; // { nodeId: maxLevel }
-let selectedLevels = {}; // Current target state { nodeId: level }
-
-// Baseline state variables
-let baselineLevels = {}; // { nodeId: level }
-let baselineGoldM = 0;
-let baselineBooks = 0;
-let baselinePacts = 0;
-let baselineTimeS = 0;
-
 // --- Utility Functions (parseTime, formatTime, parseCsvData, mapJsonToCsvNames, getNodeName) ---
-// (Keep the utility functions from the previous version - they remain the same)
 function parseTime(timeStr) {
     if (!timeStr || typeof timeStr !== 'string' || !timeStr.includes(':')) return 0;
     const parts = timeStr.split(':').map(Number);
@@ -212,8 +211,7 @@ function getNodeName(node, hero) {
     return node.id;
 }
 
-// --- UI Functions (buildTreeUI, createNodeElement, addEventListeners, handleLevelChange, updateNodeState, areRequirementsMet) ---
-// (Keep UI functions from previous version, minor update to handleLevelChange and updateNodeState for styling)
+// --- UI Functions (buildTreeUI, addEventListeners, handleLevelChange, updateNodeState, areRequirementsMet) ---
 function buildTreeUI() {
     console.log("--- buildTreeUI started ---");
     const container = document.getElementById('treeContainer');
@@ -229,22 +227,7 @@ function buildTreeUI() {
     baselineLevels = {};
     resetBaseline();
 
-    // Log before attempting to access .nodes
-    console.log("Checking window.treeData just before accessing nodes:", window.treeData);
-
-    // Verify window.treeData and window.treeData.nodes right before the loop
-    if (!window.treeData || !Array.isArray(window.treeData.nodes)) {
-        console.error("CRITICAL: window.treeData.nodes is not a valid array right before the loop! Value:", window.treeData?.nodes);
-        // Optionally display an error in the UI as well
-        container.innerHTML = '<p class="text-red-500 font-bold">Error: Research node data is missing or invalid.</p>';
-        return; // Stop execution if nodes array is invalid
-    }
-
-    console.log(`Processing ${window.treeData.nodes.length} nodes found right before loop.`); // Confirm length again
-
-    // Explicitly use window.treeData.nodes for clarity
     window.treeData.nodes.forEach(node => {
-        // --- Start Debugging Tier Calculation --- (Keep the detailed logging from the previous step here)
         nodeMap[node.id] = node;
         selectedLevels[node.id] = 0;
         baselineLevels[node.id] = 0;
@@ -254,8 +237,6 @@ function buildTreeUI() {
         const idParts = node.id.split('_');
         const lastPart = idParts.length > 1 ? idParts[idParts.length - 1] : '';
         const potentialTier = parseInt(lastPart, 10);
-
-        // console.log(`Inspecting Node: ${node.id}, ID Last Part: "${lastPart}", Parsed Tier from ID: ${potentialTier}, Explicit Tier Prop: ${node.tier}`);
 
         if (!isNaN(potentialTier) && potentialTier >= 1 && potentialTier <= 6) {
             tier = potentialTier;
@@ -272,41 +253,34 @@ function buildTreeUI() {
                 tiers[tier] = { left: [], right: [], main: [], middle: [] };
             }
 
-            // console.log(`Processing position for node ${node?.id}:`, node); // Log the ID and the whole node object
+            let position = node.position || 'main';
 
-            // --- Add logs before the push attempt ---
-            let position = node.position || 'main'; // Get position (defaulting if undefined)
-            // console.log(`  Attempting push for Node: ${node?.id}, Calculated Tier: ${tier}, Node Position: ${node.position}, Position Used: ${position}`);
-            // console.log(`  Value of tiers[${tier}] before push:`, tiers[tier]);
-            // --- End logs ---
-
-            // Defensive check (optional but can help catch the state)
             if (!tiers[tier]) {
-                // console.error(`CRITICAL: tiers[${tier}] became undefined unexpectedly before push for node ${node?.id}`);
-                // Optionally continue to next iteration: 'continue;' or 'return;' if using forEach correctly
                 return; // Stop processing this node if tier object disappeared
             }
 
-            // Original position assignment logic (now safer)
-            if (position === 'left') {
-                // Add extra check just before the failing operation
-                if (!tiers[tier].left) console.error(`!!! Trying to push to tiers[${tier}].left but it is undefined! Node: ${node?.id}`);
-                else tiers[tier].left.push(node);
-            } else if (position === 'right') {
-                if (!tiers[tier].right) console.error(`!!! Trying to push to tiers[${tier}].right but it is undefined! Node: ${node?.id}`);
-                else tiers[tier].right.push(node);
-            } else if (position === 'center') {
-                if (!tiers[tier].middle) console.error(`!!! Trying to push to tiers[${tier}].middle but it is undefined! Node: ${node?.id}`);
-                else tiers[tier].middle.push(node);
-            } else { // main or default
-                if (!tiers[tier].main) console.error(`!!! Trying to push to tiers[${tier}].main but it is undefined! Node: ${node?.id}`);
-                else tiers[tier].main.push(node);
+            switch (position) {
+                case 'left':
+                    if (!tiers[tier].left) console.error(`!!! Trying to push to tiers[${tier}].left but it is undefined! Node: ${node?.id}`);
+                    else tiers[tier].left.push(node);
+                    break;
+                case 'right':
+                    if (!tiers[tier].right) console.error(`!!! Trying to push to tiers[${tier}].right but it is undefined! Node: ${node?.id}`);
+                    else tiers[tier].right.push(node);
+                    break;
+                case 'center':
+                    if (!tiers[tier].middle) console.error(`!!! Trying to push to tiers[${tier}].middle but it is undefined! Node: ${node?.id}`);
+                    else tiers[tier].middle.push(node);
+                    break;
+                default: // main or default
+                    if (!tiers[tier].main) console.error(`!!! Trying to push to tiers[${tier}].main but it is undefined! Node: ${node?.id}`);
+                    else tiers[tier].main.push(node);
+                    break;
             }
         } else {
             console.warn(`  Node ${node.id} resulted in invalid tier ${tier}. Node SKIPPED.`);
         }
-        // --- End Debugging Tier Calculation ---
-    }); // End of forEach loop
+    });
 
     console.log("Grouped Tiers (after loop):", tiers); // Log the tiers object AFTER the loop finishes
 
@@ -324,18 +298,18 @@ function buildTreeUI() {
         leftDiv.className = 'tree-branch';
         leftDiv.innerHTML += createEmptyNodeElement(); // Add empty node for alignment
         (tier.left || []).forEach(node => {
-            leftDiv.innerHTML += createNodeElement(node);
+            leftDiv.innerHTML += createNodeElement(node, maxLevels[node.id], selectedLevels[node.id], getNodeName(node, selectedHero));
         });
 
         // Main (center column)
         const mainDiv = document.createElement('div');
         mainDiv.className = 'tree-main';
         (tier.main || []).forEach(node => {
-            mainDiv.innerHTML += createNodeElement(node);
+            mainDiv.innerHTML += createNodeElement(node, maxLevels[node.id], selectedLevels[node.id], getNodeName(node, selectedHero));
         });
         mainDiv.innerHTML += createEmptyNodeElement(); // Add empty node for alignment
         (tier.middle || []).forEach(node => {
-            mainDiv.innerHTML += createNodeElement(node);
+            mainDiv.innerHTML += createNodeElement(node, maxLevels[node.id], selectedLevels[node.id], getNodeName(node, selectedHero));
         });
 
         // Right branch
@@ -343,7 +317,7 @@ function buildTreeUI() {
         rightDiv.className = 'tree-branch';
         rightDiv.innerHTML += createEmptyNodeElement(); // Add empty node for alignment
         (tier.right || []).forEach(node => {
-            rightDiv.innerHTML += createNodeElement(node);
+            rightDiv.innerHTML += createNodeElement(node, maxLevels[node.id], selectedLevels[node.id], getNodeName(node, selectedHero));
         });
 
         // Append columns to tier container
@@ -365,66 +339,25 @@ function buildTreeUI() {
     addEventListeners(); calculateTotals();
 }
 
-function createNodeElement(node) {
-    const maxLevel = maxLevels[node.id] || 0;
-    const currentLevel = selectedLevels[node.id] || 0;
-    const nodeDisplayName = getNodeName(node, selectedHero);
-    
-    const elementHTML = `
-        <div class="node" id="node-${node.id}" data-node-id="${node.id}">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <div class="node-name">${nodeDisplayName}</div>
-                        <div class="node-level">
-                            <div>
-                                <span class="current-level" data-current-level=${currentLevel}>${currentLevel}</span>
-                                <span class="max-level" data-max-level=${maxLevel}>/ ${maxLevel}</span>
-                            </div>
-                            <div class="level-controls">
-                                <button class="level-up-btn" data-node-id="${node.id}" title="Increase Level">▲</button>
-                                <button class="level-down-btn" data-node-id="${node.id}" title="Decrease Level">▼</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        </div>`;
-    
-    // console.log(`Generated HTML for ${node.id}:`, elementHTML);
-    return elementHTML;
-}
-
-function createEmptyNodeElement() {
-    return `
-        <div class="node opacity-0 pointer-events-none" style="visibility:hidden;">
-            <div class="flex justify-between items-center">
-                <div>
-                    <div class="node-name">&nbsp;</div>
-                    <div class="node-level">&nbsp;</div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
 function addEventListeners() {
-document.getElementById('saveBaselineBtn').addEventListener('click', saveBaseline);
-document.getElementById('resetTreeBtn').addEventListener('click', buildTreeUI);
+    document.getElementById('saveBaselineBtn').addEventListener('click', saveBaseline);
+    document.getElementById('resetTreeBtn').addEventListener('click', buildTreeUI);
 
-document.querySelectorAll('.level-up-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const nodeId = this.dataset.nodeId;
-        // console.log(`Level up clicked for ${nodeId}`);
-        handleLevelChange(this.parentElement.parentElement, nodeId, 'up');
+    document.querySelectorAll('.level-up-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const nodeId = this.dataset.nodeId;
+            // console.log(`Level up clicked for ${nodeId}`);
+            handleLevelChange(this.parentElement.parentElement, nodeId, 'up');
+        });
     });
-});
 
-document.querySelectorAll('.level-down-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const nodeId = this.dataset.nodeId;
-        // console.log(`Level down clicked for ${nodeId}`);
-        handleLevelChange(this.parentElement.parentElement, nodeId, 'down');
+    document.querySelectorAll('.level-down-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const nodeId = this.dataset.nodeId;
+            // console.log(`Level down clicked for ${nodeId}`);
+            handleLevelChange(this.parentElement.parentElement, nodeId, 'down');
+        });
     });
-});
 }
 
 function handleLevelChange(divContainer, nodeId, direction) {
@@ -531,8 +464,6 @@ function areRequirementsMet(nodeId, targetLevel) {
         if (!reqNode) return false;
         let reqMaxLevel = parseInt(reqNode.progress.split('/')[1], 10);
         if (reqMaxLevel == 3) reqMaxLevel = 1; // Special case for Middle nodes
-        // Requirement node must be AT ITS MAX LEVEL in the *current* selection state
-        // (or baseline, should be the same if baseline is set correctly)
         return selectedLevels[reqId] === reqMaxLevel;
     });
 }
@@ -627,32 +558,4 @@ function resetBaseline() {
     baselineInfoDiv.innerHTML = `
         Baseline Cost:<br> Gold: 0 M | Books: 0 | Time: 0 sec
     `;
-    // Reset input minimums if needed (handled in updateNodeState)
 }
-
-// --- Initialization ---
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        const rawCsvData = parseCsvData(costDataCsv);
-        parsedCostData = mapJsonToCsvNames(treeData.nodes, rawCsvData);
-
-        document.querySelectorAll('.hero-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.hero-btn').forEach(btn => btn.classList.remove('selected'));
-                button.classList.add('selected');
-                selectedHero = button.dataset.hero;
-                document.getElementById('selectedHeroName').textContent = selectedHero;
-                // When hero changes, rebuild the tree which resets baseline/selections
-                buildTreeUI();
-                // No need to call calculateTotals here, buildTreeUI does it
-            });
-        });
-
-        buildTreeUI();
-        document.getElementById('selectedHeroName').textContent = selectedHero;
-    } catch (error) {
-        console.error("Error during initialization:", error);
-        const container = document.getElementById('treeContainer');
-        if(container) container.innerHTML = '<p class="text-red-600 font-bold">Error loading research tree data. Please check the console for details.</p>';
-    }
-});
