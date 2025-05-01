@@ -13,6 +13,7 @@
         - subpage A.html
         - subpage B.html
         - ...
+        - project.md (acts as the readme.md file for the project)
         - assets {folder}
             - asset A
             - asset B
